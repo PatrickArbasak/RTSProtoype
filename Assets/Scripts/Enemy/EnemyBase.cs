@@ -21,15 +21,15 @@ public class EnemyBase : Base
 
     private IEnumerator SpawnEnemy()
     {
-        while (enemies.Count <= maxBaseEnemies)
+        while (enemies.Count < maxBaseEnemies)
         {
-            yield return new WaitForSeconds(enemySpawnTime);
             if (BaseManager.instance.PlayerBases.Count > 0)
             {
                 Enemy enemy = Instantiate(enemyClass, enemySpawnPoint.position, enemySpawnPoint.rotation);
                 enemies.Add(enemy);
                 enemy.gameObject.name = ("Enemy: " + enemies.Count);
             }
+            yield return new WaitForSeconds(enemySpawnTime);
         }
     }
 }

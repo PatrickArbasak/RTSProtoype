@@ -60,7 +60,7 @@ public class Enemy : MonoBehaviour {
     {
         // See if we hit a playerBase, stop moving, and attack the playerBase.
         PlayerBase foundBase = other.gameObject.GetComponent<PlayerBase>();
-        if (foundBase != null && enemyTarget == foundBase)
+        if (foundBase != null && enemyTarget == foundBase && EnemyActionState == ActionState.Move)
         {
             EnemyActionState = ActionState.Attack;
         }

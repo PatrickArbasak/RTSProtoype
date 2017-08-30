@@ -6,9 +6,7 @@ public class PlayerBase : Base
 {
     // Events
     public delegate void PlayerBaseDestroyedHandler();
-    public /*static*/ event PlayerBaseDestroyedHandler OnPlayerBaseDestroyed;
-
-    private float healthBarLength;
+    public event PlayerBaseDestroyedHandler OnPlayerBaseDestroyed;
 
     [SerializeField]
     private int baseCost;
@@ -17,6 +15,7 @@ public class PlayerBase : Base
         get { return baseCost; }
         set { baseCost = value; }
     }
+    public RectTransform healthBar;
 
     [SerializeField]
     private ParticleSystem explosionParticleSystem;
@@ -25,7 +24,6 @@ public class PlayerBase : Base
     override protected void Start()
     {
         base.Start();
-        healthBarLength = Screen.width / 6;
     }
 
     private void Update()
@@ -33,10 +31,11 @@ public class PlayerBase : Base
         AddjustCurrentHealth(0);
     }
 
-    override public bool Damage(int damage)
+    override public bool Damage(float damage)
     {
         base.Damage(damage);
-        if (baseHealth <= 0 && BaseManager.instance.PlayerBases.Count > 0)
+        //Debug.Log("PlayerBase Damage() " + baseHealth);
+        if (baseHealth <= 0.0f && BaseManager.instance.PlayerBases.Count > 0.0f)
         {
             BaseManager.instance.PlayerBases.Remove(this);
             OnPlayerBaseDestroyed();
@@ -61,18 +60,7 @@ public class PlayerBase : Base
         if (maxHealth < 1)
             maxHealth = 1;
 
-        healthBarLength = (Screen.width / 6) * (baseHealth / (float)maxHealth);
-    }
-
-
-    void OnGUI()
-    {
-
-        Vector2 targetPos;
-        targetPos = Camera.main.WorldToScreenPoint(transform.position);
-
-        GUI.Box(new Rect(targetPos.x - 30, Screen.height - targetPos.y, 60, 20), baseHealth + "/" + maxHealth);
-
+        healthBar.sizeDelta = new Vector2(baseHealth, healthBar.sizeDelta.y);
     }
 
 }

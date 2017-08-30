@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class BaseSpawner : MonoBehaviour {
 
@@ -14,26 +15,31 @@ public class BaseSpawner : MonoBehaviour {
     private Renderer baseHighlightRenderer;
     private float baseHighlightHeight;
 
+    [SerializeField]
+    private Text buttonText;
+
     private bool isSpawning;
     private PlayerMoney playermoney;
 
     private void Start()
     {
         isSpawning = false;
+
+        buttonText.text = "Base Cost: " + baseToSpawn.BaseCost;
         playermoney = GetComponent<PlayerMoney>();
     }
 
     void OnEnable()
     {
-        PlayerInput.OnSpawnBaseInput += UseSpawnInput;
+        PlayerInput.OnMouseClick += MouseClickInput;
     }
 
     void OnDisable()
     {
-        PlayerInput.OnSpawnBaseInput -= UseSpawnInput;
+        PlayerInput.OnMouseClick -= MouseClickInput;
     }
 
-    void UseSpawnInput()
+    public void StartSearching()
     {
         if (playermoney == null)
         {
@@ -48,8 +54,12 @@ public class BaseSpawner : MonoBehaviour {
             SpawnHighlight();
             StartCoroutine(SearchingForSpawnPoint());
         }
+}
+
+    void MouseClickInput()
+    {
         // Else spawn a base where currently searching.
-        else if (isSpawning)
+        if (isSpawning)
         {
             StopCoroutine(SearchingForSpawnPoint());
             NavMeshHit navMeshHit;
@@ -99,5 +109,4 @@ public class BaseSpawner : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
     }
-
 }

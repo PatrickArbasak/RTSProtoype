@@ -6,8 +6,8 @@ public class Base : MonoBehaviour {
 
     [SerializeField] protected int maxHealth;
 
-    protected int baseHealth;
-    public int BaseHealth
+    protected float baseHealth;
+    public float BaseHealth
     {
         get{return baseHealth;}
         //set{baseHealth = value;}
@@ -19,9 +19,10 @@ public class Base : MonoBehaviour {
 	}
 
     // returns true if health is now lower than 0.
-    public virtual bool Damage(int damage)
+    public virtual bool Damage(float damage)
     {
         baseHealth -= damage;
-        return baseHealth <= 0;
+        //Debug.Log("Base Damage() " + baseHealth);
+        return baseHealth <= 0.0f;
     }
 }

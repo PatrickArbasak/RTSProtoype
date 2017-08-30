@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour {
 
-    public delegate void SpawnBaseInput();
-    public static event SpawnBaseInput OnSpawnBaseInput;
-
     public delegate void MouseClick();
     public static event MouseClick OnMouseClick;
 
@@ -21,10 +18,6 @@ public class PlayerInput : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) && OnMouseClick != null)
         {
             OnMouseClick();
-        }
-        if (Input.GetKeyDown(KeyCode.G) && OnSpawnBaseInput != null)
-        {
-            OnSpawnBaseInput();
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {

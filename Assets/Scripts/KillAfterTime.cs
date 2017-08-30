@@ -8,7 +8,7 @@ public class KillAfterTime : MonoBehaviour {
     private int timeToDie = 5;
 
 	void Start () {
-		
+        StartCoroutine(KillObject());
 	}
 
     IEnumerator KillObject()
