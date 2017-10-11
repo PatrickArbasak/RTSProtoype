@@ -88,6 +88,7 @@ public class Enemy : MonoBehaviour {
         if (enemyTarget)
         {
             enemyTarget.OnPlayerBaseDestroyed += AttackNewBase;
+            agent.Warp(agent.transform.position);
             agent.destination = enemyTarget.transform.position;
         }
         else
