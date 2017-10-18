@@ -7,6 +7,8 @@ public class MouseMove : MonoBehaviour {
     [Header("Movement")]
     [SerializeField] private int mouseMoveSpeed = 5;
     [SerializeField] private int distanceFromBoundary = 0;
+    [SerializeField] bool shouldUseMouseMove = true;
+    [SerializeField] bool shouldUseWASDMove = true;
 
     [Header("Mouse Scrolling")]
     [SerializeField] private int scrollMoveSpeed = 10;
@@ -14,6 +16,7 @@ public class MouseMove : MonoBehaviour {
     [SerializeField] private int scrollMaxDistance = 20;
 
     [Header("Map Boundary")]
+    [SerializeField] bool shouldUseMapBoundary = true;
     [SerializeField] private float nonPassibleBorderWidth = 10;
     [SerializeField] private Terrain mapTerrain;
     private Vector3 mapMinBounds;
@@ -28,8 +31,8 @@ public class MouseMove : MonoBehaviour {
         screenHeight = Screen.height;
 
         //calculate Terrain bounds
-        mapMinBounds = new Vector3(mapTerrain.transform.position.x, 0, mapTerrain.transform.position.z);
-        mapMaxBounds += mapMinBounds + new Vector3(mapTerrain.terrainData.size.x, 0, mapTerrain.terrainData.size.z);
+        //mapMinBounds = new Vector3(mapTerrain.transform.position.x, 0, mapTerrain.transform.position.z);
+        //mapMaxBounds += mapMinBounds + new Vector3(mapTerrain.terrainData.size.x, 0, mapTerrain.terrainData.size.z);
 
         //apply any border edging spce clamping
         mapMinBounds.x += nonPassibleBorderWidth;
@@ -42,7 +45,8 @@ public class MouseMove : MonoBehaviour {
     {
         BoundaryMove();
         MouseScrollMove();
-        KeepCameraWithinMap();
+        if (shouldUseMapBoundary)
+            KeepCameraWithinMap();
     }
 
     // Movement for mouse touching boundaries of screen
@@ -52,21 +56,21 @@ public class MouseMove : MonoBehaviour {
         float horizontalAxis = Input.GetAxis("Horizontal");
         float verticalAxis = Input.GetAxis("Vertical");
         // If to the right or left of screen
-        if (mousePosition.x > screenWidth - distanceFromBoundary || horizontalAxis > 0.0f)
+        if (mousePosition.x > screenWidth - distanceFromBoundary && shouldUseMouseMove || horizontalAxis > 0.0f && shouldUseWASDMove)
         {
             transform.position += new Vector3(mouseMoveSpeed * Time.deltaTime, 0, 0);
         }
-        if (mousePosition.x < 0 + distanceFromBoundary || horizontalAxis < 0.0f)
+        if (mousePosition.x < 0 + distanceFromBoundary && shouldUseMouseMove || horizontalAxis < 0.0f && shouldUseWASDMove)
         {
             transform.position -= new Vector3(mouseMoveSpeed * Time.deltaTime, 0, 0);
         }
 
         // If above or below of screen
-        if (mousePosition.y > screenHeight - distanceFromBoundary || verticalAxis > 0.0f)
+        if (mousePosition.y > screenHeight - distanceFromBoundary && shouldUseMouseMove || verticalAxis > 0.0f && shouldUseWASDMove)
         {
             transform.position += new Vector3(0, 0, mouseMoveSpeed * Time.deltaTime);
         }
-        if (mousePosition.y < 0 + distanceFromBoundary || verticalAxis < 0.0f)
+        if (mousePosition.y < 0 + distanceFromBoundary && shouldUseMouseMove || verticalAxis < 0.0f && shouldUseWASDMove)
         {
             transform.position -= new Vector3(0, 0, mouseMoveSpeed * Time.deltaTime);
         }

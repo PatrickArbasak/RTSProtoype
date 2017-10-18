@@ -5,13 +5,11 @@ using UnityEngine;
 public class Base : MonoBehaviour {
 
     [SerializeField] protected int maxHealth;
+    private TerrainPiece occupiedTerrainPiece;
+    public TerrainPiece OccupiedTerrainPiece{get{return occupiedTerrainPiece;}set{occupiedTerrainPiece = value;}}
 
     protected float baseHealth;
-    public float BaseHealth
-    {
-        get{return baseHealth;}
-        //set{baseHealth = value;}
-    }
+    public float BaseHealth{get{return baseHealth;}}
 
     protected virtual void Start()
     {

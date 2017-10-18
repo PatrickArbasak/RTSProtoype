@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour {
                     MoveToNewTarget();
                     break;
                 case ActionState.Attack:
-                    agent.isStopped = true;
+                    // stop moving
                     StartCoroutine(AttackPlayerBase());
                     break;
             }
@@ -40,7 +40,6 @@ public class Enemy : MonoBehaviour {
 
     void Start ()
     {
-        agent = GetComponent<NavMeshAgent>();
         EnemyActionState = ActionState.Move;
     }
 

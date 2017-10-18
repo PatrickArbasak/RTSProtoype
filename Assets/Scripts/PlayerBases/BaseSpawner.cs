@@ -21,6 +21,8 @@ public class BaseSpawner : MonoBehaviour {
     private bool isSpawning;
     private PlayerMoney playermoney;
 
+    TerrainPiece selectedTerrainPiece = null;
+
     private void Start()
     {
         isSpawning = false;
@@ -39,71 +41,66 @@ public class BaseSpawner : MonoBehaviour {
         PlayerInput.OnMouseClick -= MouseClickInput;
     }
 
+    void MouseClickInput()
+    {
+        // Spawn a base when currently searching.
+        if (isSpawning && selectedTerrainPiece.isOccupied == false)
+        {
+            StopCoroutine(SearchingForSpawnPoint());
+            PlayerBase playerBase = Instantiate(baseToSpawn, baseHighlightInstance.transform.position, Quaternion.identity);
+            basesSpawned++;
+            playermoney.SubtractMoney(baseToSpawn.BaseCost);
+            Destroy(baseHighlightInstance);
+
+            BaseManager.instance.PlayerBases.Add(playerBase);
+            playerBase.gameObject.name = "Base " + basesSpawned;
+            playerBase.OccupiedTerrainPiece = selectedTerrainPiece;
+            playerBase.OccupiedTerrainPiece.isOccupied = true;
+            baseHighlightInstance = null;
+            isSpawning = false;
+        }
+    }
+
     public void StartSearching()
     {
         if (playermoney == null)
         {
-            Debug.Log("Returning: BaseSpawner doesn't have Player Money!");
+            Debug.Log("Not enough Money!");
             return;
         }
-        
+
         // If you are not yet spawning a base, start searching for a place to spawn.
         if (!isSpawning && playermoney.Money >= baseToSpawn.BaseCost)
         {
             isSpawning = true;
-            SpawnHighlight();
             StartCoroutine(SearchingForSpawnPoint());
         }
-}
-
-    void MouseClickInput()
-    {
-        // Else spawn a base where currently searching.
-        if (isSpawning)
-        {
-            StopCoroutine(SearchingForSpawnPoint());
-            NavMeshHit navMeshHit;
-            if (NavMesh.SamplePosition(baseHighlightInstance.transform.position, out navMeshHit, 1.0f, NavMesh.AllAreas))
-            {
-                PlayerBase playerBase = Instantiate(baseToSpawn, baseHighlightInstance.transform.position, Quaternion.identity);
-                basesSpawned++;
-                playermoney.SubtractMoney(baseToSpawn.BaseCost);
-                Destroy(baseHighlightInstance);
-
-                BaseManager.instance.PlayerBases.Add(playerBase);
-                playerBase.gameObject.name = "Base " + basesSpawned;
-                baseHighlightInstance = null;
-                isSpawning = false;
-            }
-        }
-    }
-
-    void SpawnHighlight()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
-            baseHighlightInstance = Instantiate(baseHighlight, hit.point, Quaternion.identity);
-        baseHighlightRenderer = baseHighlightInstance.GetComponent<Renderer>();
-        baseHighlightHeight = baseHighlightRenderer.bounds.extents.y;
-        StartCoroutine(SearchingForSpawnPoint());
     }
 
     IEnumerator SearchingForSpawnPoint()
     {
-        while(isSpawning)
+        while (isSpawning)
         {
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+            if (baseHighlightInstance == null)
             {
-                baseHighlightInstance.transform.position = new Vector3(hit.point.x, hit.point.y + baseHighlightHeight, hit.point.z);
-                NavMeshHit navMeshHit;
-                if (NavMesh.SamplePosition(hit.point, out navMeshHit, 1.0f, NavMesh.AllAreas))
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 {
-                    baseHighlightRenderer.material.color = new Color(0, 0, 1, 0.5f);
+                    baseHighlightInstance = Instantiate(baseHighlight, hit.point, Quaternion.identity);
+                    baseHighlightRenderer = baseHighlightInstance.GetComponent<Renderer>();
+                    baseHighlightHeight = baseHighlightRenderer.bounds.extents.y;
                 }
-                else
+            }
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && baseHighlightInstance != null)
+            {
+                if (selectedTerrainPiece = hit.collider.gameObject.GetComponent<TerrainPiece>())
                 {
-                    baseHighlightRenderer.material.color = new Color(1, 0, 0, 0.5f);
+                    Vector3 hightlightPosition = new Vector3(selectedTerrainPiece.NavPoint.position.x, baseHighlightHeight, selectedTerrainPiece.NavPoint.position.z);
+                    baseHighlightInstance.transform.position = hightlightPosition;
+                    if (!selectedTerrainPiece.isOccupied)
+                        baseHighlightRenderer.material.color = new Color(0, 0, 1, 0.5f);
+                    else
+                        baseHighlightRenderer.material.color = new Color(1, 0, 0, 0.5f);
                 }
             }
             yield return new WaitForEndOfFrame();
