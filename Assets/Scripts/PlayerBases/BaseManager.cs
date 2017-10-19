@@ -6,7 +6,6 @@ public class BaseManager : MonoBehaviour {
 
     public static BaseManager instance = null;
 
-    public List<PlayerBase> PlayerBases = new List<PlayerBase>();
 
     // Use this for initialization
     void Awake ()

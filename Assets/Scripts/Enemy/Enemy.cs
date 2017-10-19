@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour {
 
     private void AttackNewBase()
     {
-        if (BaseManager.instance.PlayerBases.Count > 0) 
+        //if (BaseManager.instance.PlayerBases.Count > 0) 
         {
             enemyTarget = FindClosestTarget();
             Debug.Log("AttackNewBase:" + enemyTarget.gameObject.name);
@@ -99,15 +99,15 @@ public class Enemy : MonoBehaviour {
         PlayerBase closestPlayerBase = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
-        foreach (PlayerBase playerBase in BaseManager.instance.PlayerBases)
-        {
-            float dist = Vector3.Distance(playerBase.transform.position, currentPos);
-            if (dist < minDist)
-            {
-                closestPlayerBase = playerBase;
-                minDist = dist;
-            }
-        }
+        //foreach (PlayerBase playerBase in BaseManager.instance.PlayerBases)
+        //{
+        //    float dist = Vector3.Distance(playerBase.transform.position, currentPos);
+        //    if (dist < minDist)
+        //    {
+        //        closestPlayerBase = playerBase;
+        //        minDist = dist;
+        //    }
+        //}
         return closestPlayerBase;
     }
 }

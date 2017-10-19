@@ -7,21 +7,11 @@ public class PlayerInput : MonoBehaviour {
     public delegate void MouseClick();
     public static event MouseClick OnMouseClick;
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
+    void Update ()
     {
         if (Input.GetMouseButtonDown(0) && OnMouseClick != null)
         {
             OnMouseClick();
-        }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
         }
 	}
 }
