@@ -6,18 +6,19 @@ using UnityEngine.UI;
 
 public class PlaceableSpawner : MonoBehaviour {
 
-    private static int basesSpawned = 0;
+    [SerializeField] private LayerMask terrainPieceLayerMask;
+    [SerializeField] private float selectionMaxDistance;
 
-    public Material highLightMaterial;
+    [SerializeField] private Material highLightMaterial;
     private Material originalMaterial;
     private Placeable baseCurrentlySpawning;
     private Renderer baseCurrentlySpawningRenderer;
     private Placeable baseToSpawn;
 
-    [SerializeField]private Text buttonText;
-
     private bool isSpawning;
     TerrainPiece selectedTerrainPiece = null;
+
+    ISelectable currentSelecteable = null;
 
     private void Start()
     {
@@ -34,23 +35,7 @@ public class PlaceableSpawner : MonoBehaviour {
         PlayerInput.OnMouseClick -= MouseClickInput;
     }
 
-    void MouseClickInput()
-    {
-        // Spawn a base when currently searching.
-        if (isSpawning && selectedTerrainPiece != null && selectedTerrainPiece.isOccupied == false)
-        {
-            StopCoroutine(SearchingForSpawnPoint());
-            basesSpawned++;
-            baseCurrentlySpawningRenderer.material = originalMaterial;
-            baseCurrentlySpawning.OccupiedTerrainPiece = selectedTerrainPiece;
-
-            baseCurrentlySpawningRenderer = null;
-            originalMaterial = null;
-            baseCurrentlySpawning = null;
-            isSpawning = false;
-        }
-    }
-
+    // Called from UI Button's OnClick event.
     public void StartSearching(Placeable placeable)
     {
         if (!isSpawning)
@@ -61,13 +46,48 @@ public class PlaceableSpawner : MonoBehaviour {
         }
     }
 
+    void MouseClickInput()
+    {
+        // Spawn a base when currently searching.
+        if (isSpawning && selectedTerrainPiece != null && selectedTerrainPiece.isOccupied == false)
+        {
+            StopCoroutine(SearchingForSpawnPoint());
+            baseCurrentlySpawningRenderer.material = originalMaterial;
+            baseCurrentlySpawning.OccupiedTerrainPiece = selectedTerrainPiece;
+
+            //Base aBase = null; 
+            //if (aBase = baseCurrentlySpawning.GetComponent<Base>())
+            //    aBase.Damage(50);
+        
+            baseCurrentlySpawningRenderer = null;
+            originalMaterial = null;
+            baseCurrentlySpawning = null;
+            isSpawning = false;
+        }
+        else
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000))
+            {
+                ISelectable selecteable = hit.collider.GetComponent<ISelectable>();
+                if (currentSelecteable != null)
+                    currentSelecteable.UnSelected();
+                if (selecteable != null)
+                {
+                    currentSelecteable = selecteable;
+                    currentSelecteable.Selected();
+                }
+            }
+        }
+    }
+
     IEnumerator SearchingForSpawnPoint()
     {
         while (isSpawning)
         {
             SpawnBaseToSpawn();
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && baseCurrentlySpawning != null)
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, terrainPieceLayerMask) && baseCurrentlySpawning != null)
             {
                 if (selectedTerrainPiece = hit.collider.gameObject.GetComponent<TerrainPiece>())
                 {
@@ -89,7 +109,7 @@ public class PlaceableSpawner : MonoBehaviour {
         if (baseCurrentlySpawning == null)
         {
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 1000, terrainPieceLayerMask))
             {
                 baseCurrentlySpawning = Instantiate(baseToSpawn, hit.point, Quaternion.identity);
                 baseCurrentlySpawningRenderer = baseCurrentlySpawning.GetComponent<Renderer>();

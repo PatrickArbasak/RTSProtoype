@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4479125234438272}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NavPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 65770741687798866}
   - component: {fileID: 23645548791119998}
   - component: {fileID: 114957243880742498}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TerrainPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
