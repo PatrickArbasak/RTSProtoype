@@ -275,6 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 009e4e0e83d74204fbd863e585ad7b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highLightMaterial: {fileID: 2100000, guid: f8b82f46ecee734448f2fc663f1193aa, type: 2}
 --- !u!136 &136725449365527104
 CapsuleCollider:
   m_ObjectHideFlags: 1

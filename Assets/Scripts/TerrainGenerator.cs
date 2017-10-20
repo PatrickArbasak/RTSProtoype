@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainPlacer : MonoBehaviour {
+public class TerrainGenerator : MonoBehaviour {
 
     public int terrainDimensionNum = 20;
     public GameObject TerrainPiecePrefab;
-    //[SerializeField] List<GameObject> terrainPieces = new List<GameObject>();
     float terraingHeight;
     float terraingWidth;
 

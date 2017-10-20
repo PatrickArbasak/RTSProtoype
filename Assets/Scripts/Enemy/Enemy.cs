@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour {
 
-    private PlayerBase enemyTarget;
+    //private PlayerBase enemyTarget;
 
     [SerializeField] private int enemyDamage = 10;
     [SerializeField] private int enemyAttackTime = 5;
@@ -46,68 +46,69 @@ public class Enemy : MonoBehaviour {
     private void AttackNewBase()
     {
         //if (BaseManager.instance.PlayerBases.Count > 0) 
-        {
-            enemyTarget = FindClosestTarget();
-            Debug.Log("AttackNewBase:" + enemyTarget.gameObject.name);
-            enemyTarget.OnPlayerBaseDestroyed += AttackNewBase;
-            agent.isStopped = false;
-            agent.destination = enemyTarget.transform.position;
-        }
+        //{
+        //    enemyTarget = FindClosestTarget();
+        //    Debug.Log("AttackNewBase:" + enemyTarget.gameObject.name);
+        //    enemyTarget.OnPlayerBaseDestroyed += AttackNewBase;
+        //    agent.isStopped = false;
+        //    agent.destination = enemyTarget.transform.position;
+        //}
     }
 
     private void OnTriggerEnter(Collider other)
     {
         // See if we hit a playerBase, stop moving, and attack the playerBase.
-        PlayerBase foundBase = other.gameObject.GetComponent<PlayerBase>();
-        if (foundBase != null && enemyTarget == foundBase && EnemyActionState == ActionState.Move)
-        {
-            EnemyActionState = ActionState.Attack;
-        }
+        //PlayerBase foundBase = other.gameObject.GetComponent<PlayerBase>();
+        //if (foundBase != null && enemyTarget == foundBase && EnemyActionState == ActionState.Move)
+        //{
+        //    EnemyActionState = ActionState.Attack;
+        //}
     }
 
     IEnumerator AttackPlayerBase()
     {
-        while (enemyActionState == ActionState.Attack)
-        {
-            bool killedTarget = enemyTarget.Damage(enemyDamage);
-            if (killedTarget)
-            {
-                EnemyActionState = ActionState.Move;
-                yield return null;
-            }
+        //while (enemyActionState == ActionState.Attack)
+        //{
+        //    bool killedTarget = enemyTarget.Damage(enemyDamage);
+        //    if (killedTarget)
+        //    {
+        //        EnemyActionState = ActionState.Move;
+        //        yield return null;
+        //    }
 
-            yield return new WaitForSeconds(enemyAttackTime);
-        }
+        //    yield return new WaitForSeconds(enemyAttackTime);
+        //}
+        yield return null; // FIXME: temp fix for attacking a player.
     }
 
     private void MoveToNewTarget()
     {
         // Find target and start moving towards it.
-        enemyTarget = FindClosestTarget();
-        if (enemyTarget)
-        {
-            enemyTarget.OnPlayerBaseDestroyed += AttackNewBase;
-            agent.Warp(agent.transform.position);
-            agent.destination = enemyTarget.transform.position;
-        }
-        else
-            Debug.Log("Did not find a target");
+        //enemyTarget = FindClosestTarget();
+        //if (enemyTarget)
+        //{
+        //    enemyTarget.OnPlayerBaseDestroyed += AttackNewBase;
+        //    agent.Warp(agent.transform.position);
+        //    agent.destination = enemyTarget.transform.position;
+        //}
+        //else
+        //    Debug.Log("Did not find a target");
     }
 
-    private PlayerBase FindClosestTarget()
-    {
-        PlayerBase closestPlayerBase = null;
-        float minDist = Mathf.Infinity;
-        Vector3 currentPos = transform.position;
-        //foreach (PlayerBase playerBase in BaseManager.instance.PlayerBases)
-        //{
-        //    float dist = Vector3.Distance(playerBase.transform.position, currentPos);
-        //    if (dist < minDist)
-        //    {
-        //        closestPlayerBase = playerBase;
-        //        minDist = dist;
-        //    }
-        //}
-        return closestPlayerBase;
-    }
+    //private PlayerBase FindClosestTarget()
+    //{
+    //    PlayerBase closestPlayerBase = null;
+    //    float minDist = Mathf.Infinity;
+    //    Vector3 currentPos = transform.position;
+    //    //foreach (PlayerBase playerBase in BaseManager.instance.PlayerBases)
+    //    //{
+    //    //    float dist = Vector3.Distance(playerBase.transform.position, currentPos);
+    //    //    if (dist < minDist)
+    //    //    {
+    //    //        closestPlayerBase = playerBase;
+    //    //        minDist = dist;
+    //    //    }
+    //    //}
+    //    return closestPlayerBase;
+    //}
 }

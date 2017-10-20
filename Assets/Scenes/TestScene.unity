@@ -208,8 +208,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 312382120}
-  - component: {fileID: 312382119}
-  - component: {fileID: 312382121}
   - component: {fileID: 312382122}
   - component: {fileID: 312382123}
   m_Layer: 0
@@ -219,17 +217,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &312382119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 312382118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ed500be76edf804a941d42ac5dafbcb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &312382120
 Transform:
   m_ObjectHideFlags: 0
@@ -243,22 +230,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &312382121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 312382118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7d6437433319974891b7eaaa431e2e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainPieceLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  selectionMaxDistance: 0
-  highLightMaterial: {fileID: 2100000, guid: f8b82f46ecee734448f2fc663f1193aa, type: 2}
 --- !u!114 &312382122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,11 +471,11 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 312382121}
+      - m_Target: {fileID: 1112830357}
         m_MethodName: StartSearching
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 114220354211046410, guid: 5e21e8961ce4eab4babfe480e2ac8624,
+          m_ObjectArgument: {fileID: 114800219448079326, guid: 5e21e8961ce4eab4babfe480e2ac8624,
             type: 2}
           m_ObjectArgumentAssemblyTypeName: Placeable, Assembly-CSharp
           m_IntArgument: 0
@@ -625,7 +596,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1112830356}
   - component: {fileID: 1112830355}
-  - component: {fileID: 1112830359}
+  - component: {fileID: 1112830357}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -668,7 +639,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1112830359
+--- !u!114 &1112830357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -676,9 +647,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1112830354}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39ffdc007988f8648b52042771a79cd3, type: 3}
+  m_Script: {fileID: 11500000, guid: f7d6437433319974891b7eaaa431e2e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainPieceLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
+  selectionMaxDistance: 1000
+  TESTGAMEOBJECT: {fileID: 1570243911143920, guid: 7c85c7e20b7b70548b92bb030b6ff447,
+    type: 2}
 --- !u!1 &1202861216
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,7 +936,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 312382121}
+      - m_Target: {fileID: 1112830357}
         m_MethodName: StartSearching
         m_Mode: 2
         m_Arguments:
