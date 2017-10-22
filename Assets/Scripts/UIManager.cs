@@ -24,8 +24,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void EnableHealthBarUI()
+    public void EnableHealthBarUI(float currentHealth, float maxHealth)
     {
+        float percentage = (currentHealth / maxHealth) * 100;
+        healthBar.sizeDelta = new Vector2(percentage, healthBar.sizeDelta.y);
+
         healthBar.gameObject.SetActive(true);
         healthBar.parent.gameObject.SetActive(true);
     }

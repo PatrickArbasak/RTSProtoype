@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyBase : Base
+public class EnemyBase : BaseBoardPiece
 {
     [SerializeField] private int enemySpawnTime = 5;
     [SerializeField] private int maxBaseEnemies= 10;

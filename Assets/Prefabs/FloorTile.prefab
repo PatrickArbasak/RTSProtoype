@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 23645548791119998}
   - component: {fileID: 114957243880742498}
   m_Layer: 8
-  m_Name: TerrainPiece
+  m_Name: FloorTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,4 +135,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NavPoint: {fileID: 4479125234438272}
-  isOccupied: 0
+  occupiedMaterial: {fileID: 2100000, guid: 4f7576247ce314e49a580a552b7338c0, type: 2}

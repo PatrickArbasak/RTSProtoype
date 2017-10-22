@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour {
 
-    public int terrainDimensionNum = 20;
-    public GameObject TerrainPiecePrefab;
-    float terraingHeight;
-    float terraingWidth;
+    public int floorDimensionNum = 20;
+    public GameObject FloorTile;
+    float tileHeight;
+    float tileWidth;
 
     private void Start()
     {
@@ -16,18 +16,18 @@ public class TerrainGenerator : MonoBehaviour {
 
     void GenerateTerrain()
     {
-        terraingHeight = TerrainPiecePrefab.transform.lossyScale.z;
-        terraingWidth = TerrainPiecePrefab.transform.lossyScale.x;
-        for (int i = 1; i <= terrainDimensionNum; i++)
+        tileHeight = FloorTile.transform.lossyScale.z;
+        tileWidth = FloorTile.transform.lossyScale.x;
+        for (int i = 1; i <= floorDimensionNum; i++)
         {
-            for (int j = 1; j <= terrainDimensionNum; j++)
+            for (int j = 1; j <= floorDimensionNum; j++)
             {
-                float xPosition = terraingWidth * j;
-                float zPosition = terraingHeight * i;
+                float xPosition = tileWidth * j;
+                float zPosition = tileHeight * i;
                 Vector3 newPosition = new Vector3(xPosition, 0.0f, zPosition);
-                GameObject tempRoomObject = Instantiate(TerrainPiecePrefab, newPosition, Quaternion.identity) as GameObject;
+                GameObject tempRoomObject = Instantiate(FloorTile, newPosition, Quaternion.identity) as GameObject;
                 tempRoomObject.transform.parent = transform;
-                tempRoomObject.name = "terrain_" + j + ", " + i;
+                tempRoomObject.name = "tile_" + j + ", " + i;
             }
         }
     }

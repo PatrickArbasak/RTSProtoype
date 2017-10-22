@@ -7,24 +7,26 @@ using UnityEngine.UI;
 
 public class MouseInput : MonoBehaviour {
 
-    [SerializeField] private LayerMask terrainPieceLayerMask;
+    [SerializeField] private LayerMask floorTileLayerMask;
     [SerializeField] private float selectionMaxDistance;
 
-    private Placeable baseCurrentlySpawning;
-    private Placeable baseToSpawn;
+    private BoardPiece pieceCurrentlySpawning;
+    private BoardPiece pieceToSpawn;
 
     private bool isSpawning = false;
     private bool isHoldingMouse = false;
+    private bool isSelectingSelectable = false;
 
-    private TerrainPiece selectedTerrainPiece = null;
+    private FloorTile selectedFloorTile = null;
 
     private ISelectable currentSelecteable = null;
 
-
-    private List<TerrainPiece> terrainPiecePath = new List<TerrainPiece>();
+    private List<FloorTile> floorTilePath = new List<FloorTile>();
 
     public GameObject TESTGAMEOBJECT;
     private List<GameObject> TESTGAMEOBJECTS = new List<GameObject>();
+
+    public bool GetIsSelectingUI() { return EventSystem.current.IsPointerOverGameObject(); }
 
     private void Update()
     {
@@ -33,16 +35,10 @@ public class MouseInput : MonoBehaviour {
             MouseClickInput();
             isHoldingMouse = true;
         }
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !GetIsSelectingUI())
         {
             isHoldingMouse = false;
-            terrainPiecePath.Clear();
-
-            //TEST CODE
-            foreach (GameObject gm in TESTGAMEOBJECTS)
-                Destroy(gm);
-            TESTGAMEOBJECTS.Clear();
-            //END TEST CODE
+            HandleFinishedSelectingSelectable();
         }
 
         // If Spawning, handle the creation and movement of a spawning Placeable.
@@ -51,42 +47,40 @@ public class MouseInput : MonoBehaviour {
             RaycastHit hit = new RaycastHit();
             bool hitTerrain = RaycastOnlyOnTerrain(ref hit);
 
-            if (baseCurrentlySpawning == null)
+            if (pieceCurrentlySpawning == null)
             {
                 if (hitTerrain)
-                    baseCurrentlySpawning = Instantiate(baseToSpawn, hit.point, Quaternion.identity);
+                    pieceCurrentlySpawning = Instantiate(pieceToSpawn, hit.point, Quaternion.identity);
             }
-            if (hitTerrain && baseCurrentlySpawning != null)
+            if (hitTerrain && pieceCurrentlySpawning != null)
             {
-                if (selectedTerrainPiece = hit.collider.gameObject.GetComponent<TerrainPiece>())
+                if (selectedFloorTile = hit.collider.gameObject.GetComponent<FloorTile>())
                 {
-                    baseCurrentlySpawning.OccupiedTerrainPiece = selectedTerrainPiece;
-                    float heightFromTerrain = baseCurrentlySpawning.GetComponent<Renderer>().bounds.extents.y;
-                    Vector3 hightlightPosition = new Vector3(selectedTerrainPiece.NavPoint.position.x, heightFromTerrain, selectedTerrainPiece.NavPoint.position.z);
-                    baseCurrentlySpawning.transform.position = hightlightPosition;
-                    baseCurrentlySpawning.transform.rotation = Quaternion.LookRotation(-transform.forward);
+                    pieceCurrentlySpawning.OccupiedFloorTile = selectedFloorTile;
+                    Vector3 hightlightPosition = new Vector3(selectedFloorTile.NavPoint.position.x, pieceCurrentlySpawning.HeightFromFloor, selectedFloorTile.NavPoint.position.z);
+                    pieceCurrentlySpawning.transform.position = hightlightPosition;
+                    pieceCurrentlySpawning.transform.rotation = Quaternion.LookRotation(-transform.forward);
                 }
             }
         }
-        else if (isHoldingMouse && !EventSystem.current.IsPointerOverGameObject())
+        else if (isHoldingMouse && isSelectingSelectable && currentSelecteable != null && !GetIsSelectingUI())
         {
             // Raycast and check if terrian was hit.
             RaycastHit hit = new RaycastHit();
             bool hitTerrain = RaycastOnlyOnTerrain(ref hit);
             if (hitTerrain)
             {
-                if (selectedTerrainPiece = hit.collider.gameObject.GetComponent<TerrainPiece>())
+                if (selectedFloorTile = hit.collider.gameObject.GetComponent<FloorTile>())
                 {
                     // Make sure this terrain piece can be added to path.
-                    if (selectedTerrainPiece != null && selectedTerrainPiece.isOccupied == false && terrainPiecePath.Contains(selectedTerrainPiece) == false)
+                    if (selectedFloorTile != null && selectedFloorTile.IsOccupied == false && floorTilePath.Contains(selectedFloorTile) == false)
                     {
-                        terrainPiecePath.Add(selectedTerrainPiece);
+                        floorTilePath.Add(selectedFloorTile);
 
                         //TEST CODE
-                        GameObject gm = Instantiate(TESTGAMEOBJECT, terrainPiecePath[terrainPiecePath.Count - 1].NavPoint.transform);
+                        GameObject gm = Instantiate(TESTGAMEOBJECT, floorTilePath[floorTilePath.Count - 1].NavPoint.transform);
                         TESTGAMEOBJECTS.Add(gm);
                         //END TEST CODE
-
                     }
                 }
             }
@@ -95,15 +89,15 @@ public class MouseInput : MonoBehaviour {
 
     bool RaycastOnlyOnTerrain(ref RaycastHit hit)
     {
-        return Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, selectionMaxDistance, terrainPieceLayerMask);
+        return Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, selectionMaxDistance, floorTileLayerMask);
     }
 
     // Called from UI Button's OnClick event.
-    public void StartSearching(Placeable placeable)
+    public void StartSpawningBoardPiece(BoardPiece boardPiece)
     {
         if (!isSpawning)
         {
-            baseToSpawn = placeable;
+            pieceToSpawn = boardPiece;
             isSpawning = true;
         }
     }
@@ -111,15 +105,15 @@ public class MouseInput : MonoBehaviour {
     void MouseClickInput()
     {
         // Spawn a base when currently searching.
-        if (isSpawning && selectedTerrainPiece != null && selectedTerrainPiece.isOccupied == false)
+        if (isSpawning && selectedFloorTile != null && selectedFloorTile.IsOccupied == false)
         {
             isSpawning = false;
-            baseCurrentlySpawning.OccupiedTerrainPiece = selectedTerrainPiece;
-            baseCurrentlySpawning.Spawn();
+            pieceCurrentlySpawning.OccupiedFloorTile = selectedFloorTile;
+            pieceCurrentlySpawning.Spawn();
 
-            baseCurrentlySpawning = baseToSpawn = null;
+            pieceCurrentlySpawning = pieceToSpawn = null;
         }
-        else if (baseCurrentlySpawning == null)
+        else if (pieceCurrentlySpawning == null)
             HandleSelectable();
     }
 
@@ -136,7 +130,31 @@ public class MouseInput : MonoBehaviour {
             {
                 currentSelecteable = selecteable;
                 currentSelecteable.Selected();
+                isSelectingSelectable = true;
             }
         }
+    }
+
+    private void HandleFinishedSelectingSelectable()
+    {
+        if (isSelectingSelectable && floorTilePath.Count > 0)
+        {
+            MonoBehaviour mg = currentSelecteable as MonoBehaviour;
+            MovingBoardPiece movingPlaceable;
+            if (movingPlaceable = mg.gameObject.GetComponent<MovingBoardPiece>())
+            {
+                movingPlaceable.OccupiedFloorTile.IsOccupied = false;
+                movingPlaceable.GivePath(floorTilePath);
+            }
+
+            floorTilePath.Clear();
+
+            //TEST CODE
+            foreach (GameObject gm in TESTGAMEOBJECTS)
+                Destroy(gm);
+            TESTGAMEOBJECTS.Clear();
+            //END TEST CODE
+        }
+        isSelectingSelectable = false;
     }
 }
