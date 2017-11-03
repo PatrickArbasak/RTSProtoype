@@ -23,9 +23,6 @@ public class MouseInput : MonoBehaviour {
 
     private List<FloorTile> floorTilePath = new List<FloorTile>();
 
-    public GameObject TESTGAMEOBJECT;
-    private List<GameObject> TESTGAMEOBJECTS = new List<GameObject>();
-
     public bool GetIsSelectingUI() { return EventSystem.current.IsPointerOverGameObject(); }
 
     private void Update()
@@ -63,6 +60,7 @@ public class MouseInput : MonoBehaviour {
                 }
             }
         }
+        // Holding mouse while selecting.
         else if (isHoldingMouse && isSelectingSelectable && currentSelecteable != null && !GetIsSelectingUI())
         {
             // Raycast and check if terrian was hit.
@@ -72,15 +70,24 @@ public class MouseInput : MonoBehaviour {
             {
                 if (selectedFloorTile = hit.collider.gameObject.GetComponent<FloorTile>())
                 {
-                    // Make sure this terrain piece can be added to path.
-                    if (selectedFloorTile != null && selectedFloorTile.IsOccupied == false && floorTilePath.Contains(selectedFloorTile) == false)
+                    FloorTile lastTileInPath = null;
+                    if (floorTilePath.Count > 0) // if this is not the first tile in path.
+                        lastTileInPath = floorTilePath[floorTilePath.Count - 1];
+                    else
                     {
+                        MonoBehaviour mg = currentSelecteable as MonoBehaviour;
+                        BoardPiece boardPiece;
+                        if (boardPiece = mg.gameObject.GetComponent<BoardPiece>())
+                        {
+                            lastTileInPath = boardPiece.OccupiedFloorTile;
+                        }
+                    }
+                    // Make sure this terrain piece can be added to path.
+                    bool tileNotOnPathOrOccupied = selectedFloorTile.CurrentTileState != FloorTile.TileState.OnPath && selectedFloorTile.CurrentTileState != FloorTile.TileState.Occupied;
+                    if (tileNotOnPathOrOccupied && !floorTilePath.Contains(selectedFloorTile) && lastTileInPath.IsTileConnected(selectedFloorTile))
+                    {
+                        selectedFloorTile.CurrentTileState = FloorTile.TileState.OnPath;
                         floorTilePath.Add(selectedFloorTile);
-
-                        //TEST CODE
-                        GameObject gm = Instantiate(TESTGAMEOBJECT, floorTilePath[floorTilePath.Count - 1].NavPoint.transform);
-                        TESTGAMEOBJECTS.Add(gm);
-                        //END TEST CODE
                     }
                 }
             }
@@ -105,7 +112,7 @@ public class MouseInput : MonoBehaviour {
     void MouseClickInput()
     {
         // Spawn a base when currently searching.
-        if (isSpawning && selectedFloorTile != null && selectedFloorTile.IsOccupied == false)
+        if (isSpawning && selectedFloorTile != null && selectedFloorTile.CurrentTileState != FloorTile.TileState.Occupied)
         {
             isSpawning = false;
             pieceCurrentlySpawning.OccupiedFloorTile = selectedFloorTile;
@@ -143,17 +150,14 @@ public class MouseInput : MonoBehaviour {
             MovingBoardPiece movingPlaceable;
             if (movingPlaceable = mg.gameObject.GetComponent<MovingBoardPiece>())
             {
-                movingPlaceable.OccupiedFloorTile.IsOccupied = false;
+                movingPlaceable.OccupiedFloorTile.CurrentTileState = FloorTile.TileState.Idle;
                 movingPlaceable.GivePath(floorTilePath);
             }
-
+            //foreach (FloorTile tile in floorTilePath)
+            //{
+            //    tile.CurrentTileState = FloorTile.TileState.Idle;
+            //}
             floorTilePath.Clear();
-
-            //TEST CODE
-            foreach (GameObject gm in TESTGAMEOBJECTS)
-                Destroy(gm);
-            TESTGAMEOBJECTS.Clear();
-            //END TEST CODE
         }
         isSelectingSelectable = false;
     }
